@@ -115,4 +115,11 @@ contract Auctionify {
         // 3. Interaction. send the money to the beneficiary
         beneficiary.transfer(bids[highestBidder]);
     }
+
+  function cleanUpAfterYourself() public {
+    require(auctionState == AuctionStates.Ended, "Auction is not ended.");
+ //   if (address(this).balance == 0){ //should be 0 but not limiting just in case!
+      selfdestruct(beneficiary); //save blockchain space, save lives
+ //   }
+  }
 }
