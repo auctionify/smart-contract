@@ -101,7 +101,7 @@ contract Auctionify {
 
     // returns the highest bid value
     function highestBid() public view returns(uint){
-      return bids[highestBidder]
+      return (bids[highestBidder]);
     }
 
     /// End the auction and send the highest bid
