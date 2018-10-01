@@ -99,6 +99,10 @@ contract Auctionify {
         emit HighestBidIncreased(msg.sender, msg.value);
     }
 
+    // returns the highest bid value
+    function highestBid() public view returns(uint){
+      return bids[highestBidder]
+    }
 
     /// End the auction and send the highest bid
     /// to the beneficiary.
