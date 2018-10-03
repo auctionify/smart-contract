@@ -62,6 +62,7 @@ contract Auctionify {
     // Events that will be fired on changes.
     event HighestBidIncreased(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
+    event CheaterBidder(address cheater, uint amount);
 
     constructor(
         string _auctionTitle,
@@ -89,7 +90,10 @@ contract Auctionify {
             //refund the last highest bid
             uint lastBid = bids[highestBidder];
             bids[highestBidder] = 0;
-            highestBidder.transfer(lastBid);
+            if(!highestBidder.send(lastBid)) {
+                // if failed to send, the bid is kept in the contract
+                emit CheaterBidder(highestBidder, lastBid);
+            }
         }
 
         //set the new highestBidder
@@ -117,13 +121,14 @@ contract Auctionify {
         emit AuctionEnded(highestBidder, bids[highestBidder]);
 
         // 3. Interaction. send the money to the beneficiary
-        beneficiary.transfer(bids[highestBidder]);
+        if(!beneficiary.send(bids[highestBidder])) {
+            // if failed to send, the final bid is kept in the contract
+            // the funds can be released using cleanUpAfterYourself()
+        }
     }
 
   function cleanUpAfterYourself() public {
     require(auctionState == AuctionStates.Ended, "Auction is not ended.");
- //   if (address(this).balance == 0){ //should be 0 but not limiting just in case!
       selfdestruct(beneficiary); //save blockchain space, save lives
- //   }
   }
 }
