@@ -37,3 +37,10 @@ minimumBid
 highestBidder()
 highestBid()
 ```
+
+## Events
+```
+event HighestBidIncreased(address bidder, uint amount);
+event AuctionEnded(address winner, uint amount);
+event CheaterBidder(address cheater, uint amount);
+```
