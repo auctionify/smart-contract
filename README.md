@@ -10,16 +10,16 @@ string _auctionTitle,
 uint _auctionEnd, //timestamp of the end time in which bids will not be accepted
 address _beneficiary, //where the highestBid funds will be transferred to
 string _auctionDesc,
-uint _minimumBid //Minimum bid that is accepted
+uint _minimumBid //Minimum bid that is accepted in Wei
 ```
 
 ## Bidding
-The smart contract `bid()` will accept bids (higher than `minimumBid`) from the deployment to `auctionEnd`.
+`bid()` will accept bids (higher than `minimumBid`) from the deployment `auctionStart` to `auctionEnd`.
 On receiving the higher bid, it will refund the second high bid. Only the highest bidder funds will be kept in the auctionify address.
 
 
 ## End Auction
-Only callable after `auctionEnd`. This function will transfer the `HighestBid` to the `beneficiary`.
+`endAuction()` : Only callable after `auctionEnd`. This function will transfer the `HighestBid` to the `beneficiary`.
 
 
 ## Clean up
@@ -28,12 +28,14 @@ Only callable after `auctionEnd`. This function will transfer the `HighestBid` t
 
 ## Read contract:
 ```
-auctionTitle
-auctionDescription
-beneficiary
-auctionEnd
-minimumBid
+// Auction details
+auctionTitle()
+auctionDescription()
+beneficiary()
+auctionEnd() //timestamp of the auction end
+minimumBid() //in Wei
 
+// Highest bid details
 highestBidder()
 highestBid()
 ```
@@ -44,3 +46,10 @@ event HighestBidIncreased(address bidder, uint amount);
 event AuctionEnded(address winner, uint amount);
 event CheaterBidder(address cheater, uint amount);
 ```
+
+
+# TODO:
+- Escrow option with `auctionify.eth` being the escrow
+  - ENS resolver for .eth to address (?)
+  - Fee structure for Escrow
+  - Github issue template for disputes
