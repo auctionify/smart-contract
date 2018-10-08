@@ -53,3 +53,11 @@ event CheaterBidder(address cheater, uint amount);
   - ENS resolver for .eth to address (?)
   - Fee structure for Escrow
   - Github issue template for disputes
+- Auction registry smart contract
+  - opt out option (unlisted)
+- Verify highestBidder page
+  - Sign contact for Highest bidder(email/phone)
+  - Verify page for Beneficiary (URL)
+- Mobile wallets support (Trust Wallet, Coinbase Wallet)
+- Update smart contract on UI deploy (pipeline)
+- 
