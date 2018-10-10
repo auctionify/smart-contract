@@ -12,7 +12,7 @@ contract Auctionify {
 
     // Escrow
     address public escrowModerator;
-    bool public escrowEnabled;
+    //bool public escrowEnabled;
 
     // Current state of the auction.
     address public highestBidder;
@@ -94,7 +94,9 @@ contract Auctionify {
         auctionDescription = _auctionDesc;
         auctionState = AuctionStates.Started;
         minimumBid = _minimumBid;
-        escrowEnabled = _escrowEnabled;
+        if (_escrowEnabled) {
+          escrowModerator = "0x" //TODO: add the right address or possibily ENS for auctionify.eth
+        }
     }
 
     /// Bid on the auction with the value sent
