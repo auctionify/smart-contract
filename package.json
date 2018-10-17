@@ -1,0 +1,23 @@
+{
+  "name": "@auctionify/smart-contract",
+  "version": "0.0.2",
+  "description": "Auctionify smart contract",
+  "main": "index.js",
+  "scripts": {
+    "compile": "node compile.js",
+    "prepare": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auctionify/smart-contract.git"
+  },
+  "license": "GNU GPLv3",
+  "bugs": {
+    "url": "https://github.com/auctionify/smart-contract/issues"
+  },
+  "homepage": "https://github.com/auctionify/smart-contract#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "solc": "^0.4.25"
+  }
+}
