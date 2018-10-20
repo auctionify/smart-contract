@@ -11,9 +11,8 @@ const source = fs.readFileSync(contractsPath, 'UTF-8');
 const compiled = solc.compile(source, 1).contracts[':Auctionify'];
 
 const bytecode = compiled.bytecode;
-const API = JSON.parse(compiled.interface);
-
+const ABI = JSON.parse(compiled.interface);
 
 if (!fs.existsSync(compiledPath)) fs.mkdirSync(compiledPath);
 
-fs.writeFileSync(compiledFile, `module.exports = ${JSON.stringify({bytecode, API}, null, 2)};`);
+fs.writeFileSync(compiledFile, `module.exports = ${JSON.stringify({bytecode, ABI}, null, 2)};`);

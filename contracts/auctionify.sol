@@ -10,6 +10,10 @@ contract Auctionify {
     string public auctionDescription;
     uint public minimumBid;
 
+    // Escrow
+    address public escrowModerator;
+    //bool public escrowEnabled;
+
     // Current state of the auction.
     address public highestBidder;
 
@@ -59,6 +63,18 @@ contract Auctionify {
       _;
     }
 
+    modifier onlyHighestBidderOrEscrow()
+    {
+      // only highestBidder or the moderator can call
+      if ((msg.sender == highestBidder) || (msg.sender == escrowModerator)) {
+        _;
+      }
+      else{
+        revert();
+      }
+    }
+
+
     // Events that will be fired on changes.
     event HighestBidIncreased(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
@@ -69,7 +85,9 @@ contract Auctionify {
         uint _auctionEnd,
         address _beneficiary,
         string _auctionDesc,
-        uint _minimumBid
+        uint _minimumBid,
+        bool _escrowEnabled,
+        bool _listed
     ) public {
         auctionTitle = _auctionTitle;
         beneficiary = _beneficiary;
@@ -77,6 +95,12 @@ contract Auctionify {
         auctionDescription = _auctionDesc;
         auctionState = AuctionStates.Started;
         minimumBid = _minimumBid;
+        if (_escrowEnabled) {
+          escrowModerator = address(0x32cEfb2dC869BBfe636f7547CDa43f561Bf88d5A); //TODO: ENS resolver for auctionify.eth
+        }
+        if (_listed) {
+          // TODO: List in the registrar
+        }
     }
 
     /// Bid on the auction with the value sent
@@ -110,7 +134,7 @@ contract Auctionify {
 
     /// End the auction and send the highest bid
     /// to the beneficiary.
-    function endAuction() public {
+    function endAuction() public onlyHighestBidderOrEscrow {
 
         // 1. Conditions
         require(now >= auctionEnd, "Auction not yet ended.");
