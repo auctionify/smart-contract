@@ -1,6 +1,6 @@
 {
   "name": "@auctionify/smart-contract",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Auctionify smart contract",
   "main": "index.js",
   "scripts": {
