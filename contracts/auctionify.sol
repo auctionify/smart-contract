@@ -65,8 +65,8 @@ contract Auctionify {
 
     modifier onlyHighestBidderOrEscrow()
     {
-      // only highestBidder or the moderator can call
-      if ((msg.sender == highestBidder) || (msg.sender == escrowModerator)) {
+      // only highestBidder or the moderator can call. Also callable if no one has bidded
+      if ((msg.sender == highestBidder) || (msg.sender == escrowModerator) || (highestBidder == 0)) {
         _;
       }
       else{
@@ -124,6 +124,8 @@ contract Auctionify {
         highestBidder = msg.sender;
         bids[msg.sender] = msg.value;
 
+        //change state and trigger event
+        auctionState = AuctionStates.Ongoing;
         emit HighestBidIncreased(msg.sender, msg.value);
     }
 
@@ -153,6 +155,6 @@ contract Auctionify {
 
   function cleanUpAfterYourself() public {
     require(auctionState == AuctionStates.Ended, "Auction is not ended.");
-      selfdestruct(beneficiary); //save blockchain space, save lives
+      selfdestruct(escrowModerator); //save blockchain space, save lives
   }
 }
