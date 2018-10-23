@@ -96,6 +96,7 @@ contract Auctionify {
         auctionState = AuctionStates.Started;
         minimumBid = _minimumBid;
         if (_escrowEnabled) {
+          // TODO: get moderatorID, (delegate moderator list to a ens resolver)
           escrowModerator = address(0x32cEfb2dC869BBfe636f7547CDa43f561Bf88d5A); //TODO: ENS resolver for auctionify.eth
         }
         if (_listed) {
@@ -103,8 +104,7 @@ contract Auctionify {
         }
     }
 
-    /// Bid on the auction with the value sent
-    /// together with this transaction.
+    /// Bid on the auction with the value sent with this transaction.
     /// The lesser value will be refunded
     function bid() public payable auctionNotEnded isMinimumBid isHighestBid {
         // No arguments are necessary, all
@@ -155,6 +155,10 @@ contract Auctionify {
 
   function cleanUpAfterYourself() public {
     require(auctionState == AuctionStates.Ended, "Auction is not ended.");
-      selfdestruct(escrowModerator); //save blockchain space, save lives
+      if (escrowModerator != 0x0) {
+        selfdestruct(escrowModerator);
+      } else {
+        selfdestruct(beneficiary); //save blockchain space, save lives
+      }
   }
 }
