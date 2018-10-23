@@ -1,5 +1,9 @@
 pragma solidity ^0.4.22;
 
+/// @title Auctionify, A platform to auction stuff, using ethereum
+/// @author Auctionify.xyz
+/// @notice This is the stand alone version of the auction
+/// // @dev All function calls are currently implement without side effects
 contract Auctionify {
     // Parameters of the auction.
     // Time is absolute unix timestamps
@@ -54,8 +58,8 @@ contract Auctionify {
 
     modifier isHighestBid()
     {
-      // If the bid is not higher, send the
-      // money back.
+      // If the bid is not higher than higestBid,
+      // send the money back.
       require(
           msg.value > bids[highestBidder],
           "There already is a higher bid."
@@ -65,8 +69,9 @@ contract Auctionify {
 
     modifier onlyHighestBidderOrEscrow()
     {
-      // only highestBidder or the moderator can call. Also callable if no one has bidded
-      if ((msg.sender == highestBidder) || (msg.sender == escrowModerator) || (highestBidder == 0)) {
+      // only highestBidder or the moderator can call.
+      // Also callable if no one has bidded
+      if ((msg.sender == highestBidder) || (msg.sender == escrowModerator) || (highestBidder == address(0))) {
         _;
       }
       else{
@@ -104,13 +109,16 @@ contract Auctionify {
         }
     }
 
-    /// Bid on the auction with the value sent with this transaction.
-    /// The lesser value will be refunded
+    /// @author Auctionify.xyz
+   /// @notice Bid on the auction with the amount of `msg.value`
+   /// The lesser value will be refunded.
+   /// updates highestBidder
+   /// @dev should satisfy auctionNotEnded(), isMinimumBid(), isHighestBid()
     function bid() public payable auctionNotEnded isMinimumBid isHighestBid {
         // No arguments are necessary, all
         // information is already part of
         // the transaction.
-        if (highestBidder != 0) {
+        if (highestBidder != address(0)) {
             //refund the last highest bid
             uint lastBid = bids[highestBidder];
             bids[highestBidder] = 0;
@@ -129,13 +137,19 @@ contract Auctionify {
         emit HighestBidIncreased(msg.sender, msg.value);
     }
 
-    // returns the highest bid value
+    /// @author auctionify.xyz
+   /// @notice Getter function for highestBid `bids[highestBidder]`
+   /// @dev View only function, free
+   /// @return the highest bid value
     function highestBid() public view returns(uint){
       return (bids[highestBidder]);
     }
 
     /// End the auction and send the highest bid
     /// to the beneficiary.
+    /// @author auctionify.xyz
+   /// @notice Ends the auction and sends the `bids[highestBidder]` to `beneficiary`
+   /// @dev onlyHighestBidderOrEscrow, after `auctionEnd`, only if `auctionState != AuctionStates.Ended`
     function endAuction() public onlyHighestBidderOrEscrow {
 
         // 1. Conditions
@@ -153,9 +167,12 @@ contract Auctionify {
         }
     }
 
+    /// @author auctionify.xyz
+   /// @notice selfdestructs and sends the balance to `escrowModerator` or `beneficiary`
+   /// @dev only if `auctionState == AuctionStates.Ended`
   function cleanUpAfterYourself() public {
     require(auctionState == AuctionStates.Ended, "Auction is not ended.");
-      if (escrowModerator != 0x0) {
+      if (escrowModerator != address(0)) {
         selfdestruct(escrowModerator);
       } else {
         selfdestruct(beneficiary); //save blockchain space, save lives
